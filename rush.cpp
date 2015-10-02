@@ -15,6 +15,7 @@
 */
 // Header files ///////////////////////////////////////////////////
 #include <queue>
+#include <stack>
 #include <map>
 #include <string>
 #include "vehicle.h"
@@ -31,6 +32,8 @@ const int MAX_MOVES = 60;
 int bestMoves;
 int ** board;
 map<unsigned int,unsigned int> dejavu;
+stack<int> solution;
+stack<int> bestSolution;
 vehicle* vehicles;
 int numVehicles;
 
@@ -58,13 +61,16 @@ int main(int argc, char** argv){
 
   int idx;
   string option;
+  bool m_solution = false;
   bool m_timer = false;
 
   // command line arguments
   if(argc >= 2){
     for(idx = 1; idx < argc; idx++){
       option = argv[idx];
-      if(option == "-t"){
+      if(option == "-s"){
+        m_solution = true;
+      }else if(option == "-t"){
         m_timer = true;
       }else{
         cout << "Unknown option: " << option << endl;
