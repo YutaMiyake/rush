@@ -58,7 +58,7 @@ unsigned int hash_func(int ** bd);
 void board2str(string& str, int ** bd);
 void str2board(const string &str, int ** bd);
 void updateCars();
-void showSolutionSteps(stack<int>& sol);
+void showSolutionSteps(stack<int> sol);
 
 // main driver  /////////////////////////////////////////////////
 int main(int argc, char** argv){
@@ -351,10 +351,8 @@ void displayBoard(int ** temp){
 }
 bool isSolved(int num){
   // if your car reaches the most right column
-    if(vehicles[0].col + (vehicles[0].type - 1) == 5)
-    {
+    if(vehicles[0].col + (vehicles[0].type - 1) == 5){
       // update the bestmove based on the current # of moves and return true
-      bestMoves = num;
       return true;
     }
     // otherwise false
@@ -410,15 +408,24 @@ void updateCars(){
       }
     }
 }
-void showSolutionSteps(stack<int>& sol){
+void showSolutionSteps(stack<int> sol){
   int action, car;
-  cout <<"A minimal solution is:" << endl;
+  stack<int> reverse;
   while(!sol.empty()){
-
     action = sol.top();
     sol.pop();
     car = sol.top();
     sol.pop();
+    reverse.push(car);
+    reverse.push(action);
+  }
+
+  cout <<"A minimal solution is:" << endl;
+  while(!reverse.empty()){
+    action = reverse.top();
+    reverse.pop();
+    car = reverse.top();
+    reverse.pop();
     cout << car << " " <<  (char) action << endl;
   }
 }
