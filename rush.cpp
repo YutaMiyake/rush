@@ -6,11 +6,14 @@
        Given a set of vehicle data, this program solves the problem.
        This program uses Breadth-first search algorithm (level order traversal).
        A map called "dejavu" holds boards that you have seen before by using
-       the unique hash key calculated from an arrangement of each vehicle as
+       the "unique" hash key calculated from an arrangement of each vehicle as
        both key and value. Current board is always contained in the 2D global
        array global. Additionally, a queue is used for containing boards,
        represented by string class, to be checked. Each iteration, single level
        is checked. Also this program uses a vehicle class to update the all vehicles' data.
+       By defualt, this produces the only minimal number of moves that the given
+       problem requires to be solved. Using options in command line input,
+       you can see solution sequences (-s) and elapsed time to solve (-t).
 @date 10/2 2015
 */
 // Header files ///////////////////////////////////////////////////
@@ -28,17 +31,25 @@ using namespace std;
 #define MAX_COL 6
 const int MAX_MOVES = 60;
 
+// class declaration ///////////////////////////////////////////////
+class Board{
+  public:
+    Board(){}
+    Board(string bd, stack<int> steps){
+      this->currentBoard = bd;
+      this->steps = steps;
+    }
+    stack<int> steps;
+    string currentBoard;
+};
 // global variable /////////////////////////////////////////////////
-int bestMoves;
 int ** board;
 map<unsigned int,unsigned int> dejavu;
-stack<int> solution;
-stack<int> bestSolution;
 vehicle* vehicles;
 int numVehicles;
 
 // function prototypes ////////////////////////////////////////
-bool solve_It(int numMoves, queue<string> q);
+bool solve_It(int numMoves, queue<Board> queue, stack<int>& bestSolution, bool solution, int &bestMoves);
 bool forward(int n);
 bool backward(int n);
 void displayBoard(int ** temp);
@@ -47,6 +58,7 @@ unsigned int hash_func(int ** bd);
 void board2str(string& str, int ** bd);
 void str2board(const string &str, int ** bd);
 void updateCars();
+void showSolutionSteps(stack<int>& sol);
 
 // main driver  /////////////////////////////////////////////////
 int main(int argc, char** argv){
@@ -57,7 +69,9 @@ int main(int argc, char** argv){
   int type,row,col;
   char direction;
   int i,j;
-  queue<string> queue;
+  queue<Board> queue;
+  stack<int> best;
+  int bestMoves;
 
   int idx;
   string option;
@@ -74,6 +88,7 @@ int main(int argc, char** argv){
         m_timer = true;
       }else{
         cout << "Unknown option: " << option << endl;
+        cout << "Usage: ./rush [-s | -t]" << endl;
         return -1;
       }
     }
@@ -119,9 +134,12 @@ int main(int argc, char** argv){
       // solve it
       Timer t(m_timer);
       t.start();
-      if(solve_It(0,queue)){
+      if(solve_It(0,queue,best, m_solution, bestMoves)){
         cout << "Scenario "<< numScenario << " requires "
              << bestMoves << " moves" << endl;
+        if(m_solution){
+          showSolutionSteps(best);
+        }
       }
       t.stop();
       if(m_timer){
@@ -140,14 +158,16 @@ int main(int argc, char** argv){
 }
 
 // function implementation /////////////////////////////////////////
-bool solve_It(int numMoves, queue<string> queue){
+bool solve_It(int numMoves, queue<Board> queue, stack<int>& bestSolution, bool solution, int &bestMoves){
+  Board bd;
   string str;
+  stack<int> steps;
   int i,j,size,hash;
 
   // initializations
   hash = hash_func(board);
   board2str(str,board);
-  queue.push(str);
+  queue.push(Board(str,stack<int>()));
   dejavu[hash] = hash;
 
   // loop till the queue becomes empty
@@ -157,7 +177,9 @@ bool solve_It(int numMoves, queue<string> queue){
     // loop through boards in a single level
     for(i = 0; i < size; i++){
       // pop out
-      str = queue.front();
+      bd = queue.front();
+      str = bd.currentBoard;
+      steps = bd.steps;
       queue.pop();
 
       // convertion from string to board
@@ -168,6 +190,9 @@ bool solve_It(int numMoves, queue<string> queue){
 
       // if the game is solved, return true
       if(isSolved(numMoves)){
+        if(solution){
+          bestSolution = steps;
+        }
         return true;
       }
 
@@ -181,7 +206,15 @@ bool solve_It(int numMoves, queue<string> queue){
             if(dejavu.find(hash) == dejavu.end()){
               board2str(str,board);
               dejavu[hash]= hash;
-              queue.push(str);
+              if(solution){
+                steps.push(j);
+                steps.push('B');
+              }
+              queue.push(Board(str,steps));
+              if(solution){
+                steps.pop();
+                steps.pop();
+              }
             }
             forward(j);   // undo
           }
@@ -193,7 +226,15 @@ bool solve_It(int numMoves, queue<string> queue){
             if(dejavu.find(hash) == dejavu.end()){
               board2str(str,board);
               dejavu[hash]= hash;
-              queue.push(str);
+              if(solution){
+                steps.push(j);
+                steps.push('F');
+              }
+              queue.push(Board(str,steps));
+              if(solution){
+                steps.pop();
+                steps.pop();
+              }
             }
             backward(j);    // undo
           }
@@ -310,7 +351,7 @@ void displayBoard(int ** temp){
 }
 bool isSolved(int num){
   // if your car reaches the most right column
-    if(vehicles[0].col + (vehicles[0].type -1) == 5)
+    if(vehicles[0].col + (vehicles[0].type - 1) == 5)
     {
       // update the bestmove based on the current # of moves and return true
       bestMoves = num;
@@ -368,4 +409,16 @@ void updateCars(){
         }
       }
     }
+}
+void showSolutionSteps(stack<int>& sol){
+  int action, car;
+  cout <<"A minimal solution is:" << endl;
+  while(!sol.empty()){
+
+    action = sol.top();
+    sol.pop();
+    car = sol.top();
+    sol.pop();
+    cout << car << " " <<  (char) action << endl;
+  }
 }
