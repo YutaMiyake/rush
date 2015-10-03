@@ -15,9 +15,10 @@ void Timer::start() throw (runtime_error){
   if(!this->m_timer){
     return;
   }
-  if( !gettimeofday(&beginTime, NULL)){
+  if(!gettimeofday(&beginTime, NULL)){
     timerWasStarted = true;
-  }else{
+  }
+  else{
     throw runtime_error("gettimeofday() returned 0. Serious problem. Can't run timer.");
   }
 }
@@ -41,7 +42,6 @@ void Timer::stop() throw (logic_error){
 }
 
 double Timer::getElapsedTime() const throw (logic_error){
-
   if(!this->m_timer){
     return -1;
   }
