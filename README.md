@@ -30,9 +30,10 @@ Syntax: {Length}{Orientation}{Row}{Col}
 0
 ### Command:
 ```bash
-$ ./rush [-t|-s] < inputfile
+$ ./rush [options] < inputfile
 ```
 
+#### Options:
 -t : show the elapsed time to solve
 
 -s : show all the steps to solve
