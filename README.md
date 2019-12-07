@@ -7,14 +7,14 @@ This program solves a given rush game and returns one of the best solutions
 which requires the minimum number of moves to get your car out of the box.
 
 # Usage
-###Input:<br />
+### Input:<br />
 [\# of cars]<br />
 [1st car description]<br />
 [2nd car description]<br />
 ...<br />
 [end mark = 0]
 
-###Car description:
+### Car description:
 Syntax: {Length}{Orientation}{Row}{Col}
 
  Length - the length of car (2|3)<br />
@@ -22,7 +22,7 @@ Syntax: {Length}{Orientation}{Row}{Col}
  Row - row position [0-5]<br />
  Col - col position [0-5]<br />
 
-###Example:
+### Example:
 3<br />
 2 H 2 1<br />
 2 V 1 3<br />
