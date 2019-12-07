@@ -1,12 +1,12 @@
-# Rush Hour
-* https://en.wikipedia.org/wiki/Rush_Hour_(board_game)
-* http://www.thinkfun.com/mathcounts/play-rush-hour
-
-# Description
+# Rush Hour Solver
 This program solves a given rush game and returns one of the best solutions
 which requires the minimum number of moves to get your car out of the box.
 
-# Usage
+### What is Rush Hour
+* https://en.wikipedia.org/wiki/Rush_Hour_(board_game)
+* http://www.thinkfun.com/mathcounts/play-rush-hour
+
+## Usage
 ### Input:<br />
 [\# of cars]<br />
 [1st car description]<br />
@@ -38,5 +38,5 @@ $ ./rush [options] < inputfile
 
 -s : show all the steps to solve
 
-# Author
+## Author
 Yuta Miyake
